@@ -120,6 +120,35 @@ For `/bar`, `limit` sets both burst capacity and the number of tokens replenishe
 node --env-file=.env dist/server.js
 ```
 
+## Deployment
+
+The deployed Railway service uses Redis so rate-limit state survives API restarts and is shared by replicas. The local default remains process-local memory, which is convenient for development and resets when the API restarts.
+
+Railway production variables:
+
+```env
+RATE_LIMIT_STORE=redis
+REDIS_URL=${{Redis.REDIS_URL}}
+RATE_LIMIT_NAMESPACE=railway-production
+```
+
+`REDIS_URL` is a Railway service reference to the Redis database in the same project; do not commit a concrete Redis URL or password. Railway supplies `PORT`, and the container already listens on `0.0.0.0`.
+
+The current deployed API is available at:
+
+```text
+https://showpad-throttle-production.up.railway.app
+```
+
+Smoke-test the deployed service with one of the configured demonstration clients:
+
+```sh
+curl -i https://showpad-throttle-production.up.railway.app/foo \
+  -H 'Authorization: Bearer client-1'
+```
+
+The sample `client-1` and `client-2` credentials are intentionally for demonstration. Replace the client configuration and authentication approach before treating the public deployment as a production API.
+
 Compose additionally accepts `REDIS_PORT` and `API_PORT` to change host port mappings. If Redis's host port changes, adjust the host application's `REDIS_URL` accordingly. The API container always reaches Redis on the internal service port 6379.
 
 Redis keys contain namespace, route, client ID, and policy values. A new policy uses separate state; reverting to an earlier policy can resume its unexpired state. Changing the namespace deliberately resets the logical quota set. All replicas must use the same namespace and policies.
@@ -184,7 +213,7 @@ For POSIX shells, export the same variables (`export RATE_LIMIT_STORE=redis`, et
 - Logs contain generated request IDs, matched routes, statuses, duration, and store type. Authorization values, full query strings, and Redis credentials are excluded.
 - The assignment's known client IDs are demonstration credentials. Before exposing a real product, replace this identity lookup with verified authentication, use HTTPS/private Redis with ACLs/TLS, add dependency-aware readiness and controlled recovery, measure capacity, and define availability/durability requirements.
 
-This is a production-minded assessment implementation with tested correctness and explicit operational limits. Cloud deployment is the PDF's optional stretch; it has not been deployed or published. The GitHub workflow is provided, but its hosted execution requires publishing the repository.
+This is a production-minded assessment implementation with tested correctness and explicit operational limits. The repository is published at `CBogdan01/showpad-throttle`, and the Railway deployment is configured with Redis for shared, persistent rate-limit state. The GitHub workflow is provided for hosted CI.
 
 ## Code map
 
