@@ -1,0 +1,14 @@
+{
+  "clients": [
+    {
+      "id": "client-1",
+      "foo": { "limit": 3, "periodMs": 10000 },
+      "bar": { "limit": 3, "periodMs": 10000 }
+    },
+    {
+      "id": "client-2",
+      "foo": { "limit": 6, "periodMs": 10000 },
+      "bar": { "limit": 6, "periodMs": 10000 }
+    }
+  ]
+}

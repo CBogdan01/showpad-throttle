@@ -1,0 +1,30 @@
+{
+  "name": "showpad-throttle",
+  "version": "1.0.0",
+  "private": true,
+  "description": "An API demonstrating handwritten fixed-window and token-bucket throttling",
+  "type": "module",
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "start": "node dist/server.js",
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --config vitest.config.ts",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
+    "check": "npm run typecheck && npm run build && npm test",
+    "demo": "tsx scripts/demo.ts"
+  },
+  "dependencies": {
+    "fastify": "5.12.5",
+    "redis": "5.12.1"
+  },
+  "devDependencies": {
+    "@types/node": "24.13.6",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3",
+    "vitest": "5.0.1"
+  }
+}
